@@ -61,7 +61,7 @@ public class Sequential {
 		}
 		
 		public static boolean contains_special_character(String s){
-			CharSequence seq = "0123456789-/:;;-<=\",”€↬³°";
+			CharSequence seq = "0123456789=\"”€↬³°";
 			for (int i = 0; i < seq.length(); i++){
 				if (s.indexOf(seq.charAt(i)) != -1){
 					return true;

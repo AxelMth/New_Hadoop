@@ -76,8 +76,16 @@ public class Classifier {
 	}*/
 	
 	public static void main (String args[]) throws IOException{
-		long start_time = System.nanoTime();
-		BufferedReader br = new BufferedReader(new FileReader("/home/amathieu/workspace/SLR207/src/CC-MAIN-20170322212949-00140-ip-10-233-31-227.ec2.internal.warc.wet"));
+		//long start_time = System.nanoTime();
+		String path = "/home/amathieu/workspace/SLR207/src/";
+		String fileName = path + "ip.txt";
+		ArrayList<String> splits = new ArrayList<String> ();
+		splits.add(path+"S1.txt");
+		splits.add(path+"S2.txt");
+		splits.add(path+"S3.txt");
+		Deploy deploy = new Deploy(fileName,splits);
+		deploy.sendSplits();
+		/*BufferedReader br = new BufferedReader(new FileReader("/home/amathieu/workspace/SLR207/src/CC-MAIN-20170322212949-00140-ip-10-233-31-227.ec2.internal.warc.wet"));
 		HashMap<String,Integer> cmap = new HashMap<String,Integer>();
 		//ConcurrentHashMap<String,Integer> cmap = new ConcurrentHashMap<String,Integer>();
 		CountingThread th1 = new CountingThread(br,cmap);
@@ -115,6 +123,6 @@ public class Classifier {
 		//System.out.println("Liste des mots avec occurences : " + sortedEntries);
 		//afficher(sortedEntries);
 		double difference = (end_time - start_time)/1e9;
-		System.out.println("Temps d'éxécution en secondes : " + difference);
+		System.out.println("Temps d'éxécution en secondes : " + difference);*/
 	}
 }
