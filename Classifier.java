@@ -85,6 +85,7 @@ public class Classifier {
 		splits.add(path+"S3.txt");
 		// Envoie les splits aux slaves
 		Deploy deploy = new Deploy(fileName,splits);
+		deploy.createDirectories();
 		deploy.sendSplits();
 		//deploy.sendSlaves();
 		/*BufferedReader br = new BufferedReader(new FileReader("/home/amathieu/workspace/SLR207/src/CC-MAIN-20170322212949-00140-ip-10-233-31-227.ec2.internal.warc.wet"));
@@ -105,7 +106,7 @@ public class Classifier {
 		//th5.start();
 		//th6.start();
 		//th7.start();
-		//th8.start();
+		//th8.start();hie
 		try {
 			th1.join();
 			th2.join();

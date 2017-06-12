@@ -21,8 +21,7 @@ public class Thread_IP extends Thread {
 	public void run(){
 		ProcessBuilder pb;
 		if (mode == 0){
-			String[] splits = split.split("[\\/]");
-			ip += ":/tmp/amathieu/splits/" + splits[splits.length-1];
+			ip += ":/tmp/amathieu/splits";
 			//System.out.println("scp -pr "+ split + ip);
 			pb = new ProcessBuilder("scp","-pr",split,ip);	
 		}
@@ -31,8 +30,13 @@ public class Thread_IP extends Thread {
 			pb = new ProcessBuilder("scp","-pr",split,ip);
 			//System.out.println(split + ' ' + ip);
 		}
+		else if (mode == 2){
+			pb = new ProcessBuilder("ssh",ip,"'mkdir /tmp/amathieu /tmp/amathieu/splits /tmp/amathieu/maps'");
+		}
 		else {
-			pb = new ProcessBuilder("java","-jar","/tmp/amathieu/slave.jar","");
+			String[] splits = split.split("[\\/]");
+			String launch = "\'java -jar /tmp/amathieu/slave.jar "+splits[splits.length-1]+"\'";
+			pb = new ProcessBuilder("ssh",ip,launch);
 		}
 		Process process;
 		try {
