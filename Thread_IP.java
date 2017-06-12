@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -10,19 +9,31 @@ public class Thread_IP extends Thread {
 	
 	String ip;
 	String split;
+	int mode;
 	
-	public Thread_IP (String ip, String split){
+	public Thread_IP (String ip, String split, int mode){
 		this.ip = ip;
 		this.split = split;
+		this.mode = mode;
 	}
 	
 	@Override
 	public void run(){
-		String[] splits = split.split("[\\/]");
-		ip += ":/tmp/amathieu/" + splits[splits.length-1];
-		ProcessBuilder pb = new ProcessBuilder("scp","-pr",split,ip);
-		//ProcessBuilder pb  = new ProcessBuilder("ssh",ip,"'ls /tmp'");
-		//Map<String, String> env = pb.environment();
+		ProcessBuilder pb;
+		if (mode == 0){
+			String[] splits = split.split("[\\/]");
+			ip += ":/tmp/amathieu/splits/" + splits[splits.length-1];
+			//System.out.println("scp -pr "+ split + ip);
+			pb = new ProcessBuilder("scp","-pr",split,ip);	
+		}
+		else if (mode == 1){
+			ip += ":/tmp/amathieu";
+			pb = new ProcessBuilder("scp","-pr",split,ip);
+			//System.out.println(split + ' ' + ip);
+		}
+		else {
+			pb = new ProcessBuilder("java","-jar","/tmp/amathieu/slave.jar","");
+		}
 		Process process;
 		try {
 			process = pb.start();
@@ -38,7 +49,7 @@ public class Thread_IP extends Thread {
 			String line;
 			try {	
 				while (p_err.getState() != Thread.State.TERMINATED || p_out.getState() != Thread.State.TERMINATED){
-						line = array.poll(1,TimeUnit.SECONDS);
+						line = array.poll(2,TimeUnit.SECONDS);
 						//System.out.println(p_err.getState() +" " + p_out.getState());
 						if (line != null){
 							System.out.println(line);

@@ -24,8 +24,10 @@ public class Deploy {
 		int length = splits.size();
 		try{
 			while ((ip = br.readLine()) != null && count < length){
-				t_array.add(new Thread_IP(ip,splits.get(count)));
+				t_array.add(new Thread_IP(ip,splits.get(count),0));
+				t_array.add(new Thread_IP(ip,"/home/amathieu/workspace/SLR207/src/slave.jar",1));
 				t_array.get(t_array.size()-1).start();
+				t_array.get(t_array.size()-2).start();
 				count++;
 			}
 			for (int i = 0; i < t_array.size(); i++){
@@ -37,5 +39,4 @@ public class Deploy {
 		}
 		br.close();
 	}
-	
 }

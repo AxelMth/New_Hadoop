@@ -83,8 +83,10 @@ public class Classifier {
 		splits.add(path+"S1.txt");
 		splits.add(path+"S2.txt");
 		splits.add(path+"S3.txt");
+		// Envoie les splits aux slaves
 		Deploy deploy = new Deploy(fileName,splits);
 		deploy.sendSplits();
+		//deploy.sendSlaves();
 		/*BufferedReader br = new BufferedReader(new FileReader("/home/amathieu/workspace/SLR207/src/CC-MAIN-20170322212949-00140-ip-10-233-31-227.ec2.internal.warc.wet"));
 		HashMap<String,Integer> cmap = new HashMap<String,Integer>();
 		//ConcurrentHashMap<String,Integer> cmap = new ConcurrentHashMap<String,Integer>();
