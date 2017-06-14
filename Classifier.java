@@ -46,6 +46,10 @@ public class Classifier {
 		}
 	}
 	
+	public static void sendFilesToSlave(){
+		
+	}
+	
 	public static void afficher(Set<Entry<String, Integer>> sortedEntries){
 		System.out.println("Mots dans le texte : occurence");
 		for (Entry<String, Integer> entry  : sortedEntries) {
@@ -87,7 +91,39 @@ public class Classifier {
 		Deploy deploy = new Deploy(fileName,splits);
 		deploy.createDirectories();
 		deploy.sendSplits();
-		//deploy.sendSlaves();
+		Map<String,ArrayList<String>> map = deploy.launchSlave();
+		//System.out.println(map);
+		//System.out.println(deploy.map);
+		HashMap<String,String> map_key_device = new HashMap<String,String>();
+		for (Entry<String,ArrayList<String>> entry : map.entrySet()){
+			ArrayList<String> array = entry.getValue();
+			for (int i = 0; i < array.size(); i++){
+				String key = entry.getKey();
+				if (!map_key_device.containsKey(key)){
+					String device = array.get(i);
+					map_key_device.put(key, deploy.map.get(device));
+				}
+				//stem.out.println("Clé : " + entry.getKey() +" device : " + deploy.map.get(array.get(i)));
+			}
+			//System.out.println("Clé : " + entry.getKey() +" device : " + deploy.map.get(entry.getValue()));
+		}
+		// Map d'association clé - slave associé à la clé
+		System.out.println(map_key_device);
+		// Map d'association fichier - clé 
+		System.out.println(deploy.map);
+		// Map d'association clé - fichier à copier
+		System.out.println(map);
+		// Associer à une clé un ordinateur
+		// Copier tous les fichiers vers les slaves après le shuffle 
+		for (Entry<String,String> entry : map_key_device.entrySet()) {
+			sendFilesToSlave();
+		}
+		
+		
+		// Lancer le slave.jar pour chaque clé
+		
+		
+		
 		/*BufferedReader br = new BufferedReader(new FileReader("/home/amathieu/workspace/SLR207/src/CC-MAIN-20170322212949-00140-ip-10-233-31-227.ec2.internal.warc.wet"));
 		HashMap<String,Integer> cmap = new HashMap<String,Integer>();
 		//ConcurrentHashMap<String,Integer> cmap = new ConcurrentHashMap<String,Integer>();

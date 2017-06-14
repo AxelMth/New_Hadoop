@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -10,11 +12,13 @@ public class Thread_IP extends Thread {
 	String ip;
 	String split;
 	int mode;
+	HashMap<String,ArrayList<String>> map;
 	
-	public Thread_IP (String ip, String split, int mode){
+	public Thread_IP (String ip, String split, int mode, HashMap<String,ArrayList<String>> map){
 		this.ip = ip;
 		this.split = split;
 		this.mode = mode;
+		this.map = map;
 	}
 	
 	@Override
@@ -31,11 +35,10 @@ public class Thread_IP extends Thread {
 			//System.out.println(split + ' ' + ip);
 		}
 		else if (mode == 2){
-			pb = new ProcessBuilder("ssh",ip,"'mkdir /tmp/amathieu /tmp/amathieu/splits /tmp/amathieu/maps'");
+			pb = new ProcessBuilder("ssh",ip,"rm -fr /tmp/amathieu; mkdir /tmp/amathieu/ /tmp/amathieu/splits/ /tmp/amathieu/maps/ ");
 		}
 		else {
-			String[] splits = split.split("[\\/]");
-			String launch = "\'java -jar /tmp/amathieu/slave.jar "+splits[splits.length-1]+"\'";
+			String launch = "java -jar /tmp/amathieu/slave.jar 0 "+split;
 			pb = new ProcessBuilder("ssh",ip,launch);
 		}
 		Process process;
@@ -53,10 +56,27 @@ public class Thread_IP extends Thread {
 			String line;
 			try {	
 				while (p_err.getState() != Thread.State.TERMINATED || p_out.getState() != Thread.State.TERMINATED){
-						line = array.poll(2,TimeUnit.SECONDS);
+						line = array.poll(1,TimeUnit.SECONDS);
 						//System.out.println(p_err.getState() +" " + p_out.getState());
 						if (line != null){
 							System.out.println(line);
+							if (mode == 3){
+								String[] keys = line.split(" ");
+								String key = keys[keys.length-1];
+								String numberOfUM = String.valueOf(split.charAt(1));
+								synchronized(map){
+									if (!map.containsKey(key)){
+										ArrayList<String> UMList = new ArrayList<String>();
+										UMList.add("UM"+numberOfUM);
+										map.put(key,UMList);
+									}
+									else {
+										ArrayList<String> temp_array = map.get(key);
+										temp_array.add("UM"+numberOfUM);
+										map.put(key, temp_array);
+									}
+								}
+							}
 						}
 						else if (p_err.getState() == Thread.State.RUNNABLE && p_out.getState() == Thread.State.RUNNABLE){
 							break;
