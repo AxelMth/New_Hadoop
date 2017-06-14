@@ -1,3 +1,4 @@
+import java.awt.List;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,9 +38,25 @@ public class Thread_IP extends Thread {
 		else if (mode == 2){
 			pb = new ProcessBuilder("ssh",ip,"rm -fr /tmp/amathieu; mkdir /tmp/amathieu/ /tmp/amathieu/splits/ /tmp/amathieu/maps/ ");
 		}
-		else {
+		else if (mode == 3){
 			String launch = "java -jar /tmp/amathieu/slave.jar 0 "+split;
 			pb = new ProcessBuilder("ssh",ip,launch);
+		}
+		else if (mode == 4){
+			ArrayList<String> args = new ArrayList<String> ();
+			args.add("ssh");
+			args.add(ip);
+			String arg = "java -jar /tmp/amathieu/slave.jar 1 "+split;
+			ArrayList<String> files = map.get(split);
+			for (int i = 0; i < files.size(); i++){
+				arg += " "+files.get(i);
+			}
+			args.add(arg);
+			//System.out.println(args);
+			pb = new ProcessBuilder(args);
+		}
+		else {
+			pb = new ProcessBuilder("ssh",ip,"cat /tmp/amathieu/maps/"+split);
 		}
 		Process process;
 		try {

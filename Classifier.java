@@ -46,10 +46,6 @@ public class Classifier {
 		}
 	}
 	
-	public static void sendFilesToSlave(){
-		
-	}
-	
 	public static void afficher(Set<Entry<String, Integer>> sortedEntries){
 		System.out.println("Mots dans le texte : occurence");
 		for (Entry<String, Integer> entry  : sortedEntries) {
@@ -91,10 +87,14 @@ public class Classifier {
 		Deploy deploy = new Deploy(fileName,splits);
 		deploy.createDirectories();
 		deploy.sendSplits();
-		Map<String,ArrayList<String>> map = deploy.launchSlave();
+		deploy.launchSlave();
+		deploy.shuffle();
+		HashMap<String,String> rm_host = deploy.reduce();
+		System.out.println(rm_host);
+		deploy.printResult();
 		//System.out.println(map);
 		//System.out.println(deploy.map);
-		HashMap<String,String> map_key_device = new HashMap<String,String>();
+		/*HashMap<String,String> map_key_device = new HashMap<String,String>();
 		for (Entry<String,ArrayList<String>> entry : map.entrySet()){
 			ArrayList<String> array = entry.getValue();
 			for (int i = 0; i < array.size(); i++){
@@ -114,10 +114,24 @@ public class Classifier {
 		// Map d'association clé - fichier à copier
 		System.out.println(map);
 		// Associer à une clé un ordinateur
-		// Copier tous les fichiers vers les slaves après le shuffle 
-		for (Entry<String,String> entry : map_key_device.entrySet()) {
-			sendFilesToSlave();
-		}
+		// Copier tous les fichiers vers les slaves pour le shuffle
+		String remote_path = "/tmp/amathieu/";
+		for (Entry<String,ArrayList<String>> entry : map.entrySet()) {
+			int size = entry.getValue().size();
+			if (size > 1){
+				for (int i = 1; i < size; i++){
+					// Ordinateur à qui envoyer le fichier
+					String dest = deploy.map.get(entry.getValue().get(0));
+					// Ordinateur d'où le fichier provient
+					String src = deploy.map.get(entry.getValue().get(i));
+					String arg1 = src+":"+remote_path+"maps/"+entry.getValue().get(i)+"\\ -\\ "+deploy.map.get(entry.getValue().get(i));
+					String arg2 = dest+":"+remote_path;
+					ProcessBuilder pb = new ProcessBuilder("scp","-pr",arg1,arg2);
+					System.out.println("scp -pr "+arg1+" "+arg2);
+					pb.start();
+				}
+			}
+		}*/
 		
 		
 		// Lancer le slave.jar pour chaque clé
