@@ -76,96 +76,19 @@ public class Classifier {
 	}*/
 	
 	public static void main (String args[]) throws IOException{
-		//long start_time = System.nanoTime();
-		String path = "/home/amathieu/workspace/SLR207/src/";
-		String fileName = path + "ip.txt";
-		ArrayList<String> splits = new ArrayList<String> ();
-		splits.add(path+"S1.txt");
-		splits.add(path+"S2.txt");
-		splits.add(path+"S3.txt");
-		// Envoie les splits aux slaves
-		Deploy deploy = new Deploy(fileName,splits);
-		deploy.createDirectories();
-		deploy.sendSplits();
-		deploy.launchSlave();
-		deploy.shuffle();
-		HashMap<String,String> rm_host = deploy.reduce();
-		System.out.println(rm_host);
-		deploy.printResult();
-		//System.out.println(map);
-		//System.out.println(deploy.map);
-		/*HashMap<String,String> map_key_device = new HashMap<String,String>();
-		for (Entry<String,ArrayList<String>> entry : map.entrySet()){
-			ArrayList<String> array = entry.getValue();
-			for (int i = 0; i < array.size(); i++){
-				String key = entry.getKey();
-				if (!map_key_device.containsKey(key)){
-					String device = array.get(i);
-					map_key_device.put(key, deploy.map.get(device));
-				}
-				//stem.out.println("Clé : " + entry.getKey() +" device : " + deploy.map.get(array.get(i)));
-			}
-			//System.out.println("Clé : " + entry.getKey() +" device : " + deploy.map.get(entry.getValue()));
-		}
-		// Map d'association clé - slave associé à la clé
-		System.out.println(map_key_device);
-		// Map d'association fichier - clé 
-		System.out.println(deploy.map);
-		// Map d'association clé - fichier à copier
-		System.out.println(map);
-		// Associer à une clé un ordinateur
-		// Copier tous les fichiers vers les slaves pour le shuffle
-		String remote_path = "/tmp/amathieu/";
-		for (Entry<String,ArrayList<String>> entry : map.entrySet()) {
-			int size = entry.getValue().size();
-			if (size > 1){
-				for (int i = 1; i < size; i++){
-					// Ordinateur à qui envoyer le fichier
-					String dest = deploy.map.get(entry.getValue().get(0));
-					// Ordinateur d'où le fichier provient
-					String src = deploy.map.get(entry.getValue().get(i));
-					String arg1 = src+":"+remote_path+"maps/"+entry.getValue().get(i)+"\\ -\\ "+deploy.map.get(entry.getValue().get(i));
-					String arg2 = dest+":"+remote_path;
-					ProcessBuilder pb = new ProcessBuilder("scp","-pr",arg1,arg2);
-					System.out.println("scp -pr "+arg1+" "+arg2);
-					pb.start();
-				}
-			}
-		}*/
-		
-		
-		// Lancer le slave.jar pour chaque clé
-		
-		
-		
-		/*BufferedReader br = new BufferedReader(new FileReader("/home/amathieu/workspace/SLR207/src/CC-MAIN-20170322212949-00140-ip-10-233-31-227.ec2.internal.warc.wet"));
+		long start_time = System.nanoTime();
+		BufferedReader br = new BufferedReader(new FileReader("/home/amathieu/workspace/SLR207/src/CC-MAIN-20170322212949-00140-ip-10-233-31-227.ec2.internal.warc.wet"));
 		HashMap<String,Integer> cmap = new HashMap<String,Integer>();
 		//ConcurrentHashMap<String,Integer> cmap = new ConcurrentHashMap<String,Integer>();
-		CountingThread th1 = new CountingThread(br,cmap);
-		CountingThread th2 = new CountingThread(br,cmap);
-		CountingThread th3 = new CountingThread(br,cmap);
-		CountingThread th4 = new CountingThread(br,cmap);
-		//CountingThread th5 = new CountingThread(br,cmap);
-		//CountingThread th6 = new CountingThread(br,cmap);
-		//CountingThread th7 = new CountingThread(br,cmap);
-		//CountingThread th8 = new CountingThread(br,cmap);
-		th1.start();
-		th2.start();
-		th3.start();
-		th4.start();
-		//th5.start();
-		//th6.start();
-		//th7.start();
-		//th8.start();hie
+		ArrayList<CountingThread> array = new ArrayList<CountingThread>();
+		for (int i = 0; i < 8; i++){
+			array.add(new CountingThread(br,cmap));
+			array.get(array.size()-1).start();
+		}
 		try {
-			th1.join();
-			th2.join();
-			th3.join();
-			th4.join();
-			//th5.join();
-			//th6.join();
-			//th7.join();
-			//th8.join();
+			for (int i = 0; i < 8; i++){
+				array.get(i).join();
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -176,6 +99,6 @@ public class Classifier {
 		//System.out.println("Liste des mots avec occurences : " + sortedEntries);
 		//afficher(sortedEntries);
 		double difference = (end_time - start_time)/1e9;
-		System.out.println("Temps d'éxécution en secondes : " + difference);*/
+		System.out.println("Temps d'éxécution en secondes : " + difference);
 	}
 }

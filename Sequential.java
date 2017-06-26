@@ -94,7 +94,7 @@ public class Sequential {
 		
 		public static void main (String args[]) throws IOException{
 			long start_time = System.nanoTime();
-			BufferedReader br = new BufferedReader(new FileReader("/home/amathieu/workspace/SLR207/src/CC-MAIN-20170322212949-00140-ip-10-233-31-227.ec2.internal.warc.wet"));
+			BufferedReader br = new BufferedReader(new FileReader("/home/amathieu/workspace/SLR207/src/Final.txt"));
 			HashMap<String,Integer> map = new HashMap<String,Integer>();
 			String line = br.readLine();
 			while(line != null){
@@ -113,7 +113,7 @@ public class Sequential {
 			br.close();
 			Set<Map.Entry<String,Integer>> sortedEntries = entriesSortedByValues(map);
 			long end_time = System.nanoTime();
-			afficher_50(sortedEntries);
+			afficher	(sortedEntries);
 			//System.out.println("Liste des mots avec occurences : " + sortedEntries);
 			//afficher(sortedEntries);
 			double difference = (end_time - start_time)/1e9;
